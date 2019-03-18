@@ -1,0 +1,91 @@
+<app-auth-content>
+  <div class="app-title">
+    <div>
+      <h1><i class="fa fa-users"></i> รายการสมาชิก</h1>
+      <p>แสดงรายการสมาชิก ค้นหา และแก้ไข</p>
+    </div>
+    <ul class="app-breadcrumb breadcrumb">
+      <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/',AppURL.Authen,AuthURL.MemberCreate]">เพิ่มสมาชิกใหม่</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/',AppURL.Authen,AuthURL.Member]">รายการสมาชิก</a></li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="tile">
+        <!-- ส่วนหัว -->
+        <div class="tile-title-w-btn">
+          <h3 class="title">
+            <i class="fa fa-list">รายการสมาชิก</i>
+          </h3>
+          <!-- ค้นหา -->
+          <!-- <div class="form-group">
+            <div class="input-group ">
+              <div class="input-group-prepend" dropdown>
+                <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                  aria-controls="dropdown-basic">
+                  {{searchType.value}}
+                  <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                  <li role="menuitem" *ngFor="let item of searchTypeItems">
+                    <a class="dropdown-item" (click)="searchType = item">
+                      {{item.value}}
+                    </a>
+                  </li>
+
+                </ul>
+              </div>
+
+              <input type="text" [(ngModel)]="searchText" class="form-control" placeholder="ค้นหาข้อมูล">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button" (click)="onSearchItem()">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div> -->
+        </div>
+        <div class="tile-body">
+          <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover ">
+              <thead>
+                <tr>
+                  <th>อีเมลล์</th>
+                  <th>ชื่อ</th>
+                  <th>นามสกุล</th>
+                  <th>ตำแหน่ง</th>
+                  <th>สิทธิ์ผู้ใช้</th>
+                  <th>เวลา</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <!-- ดึงข้อมูลมาแสดง -->
+              <tbody>
+                <tr *ngFor="let item of items">
+                  <td>{{item.email}}</td>
+                  <td>{{item.firstname}}</td>
+                  <td>{{item.lastname}}</td>
+                  <td>{{item.position}}</td>
+                  <td>{{getRoleName(item.role)}}</td>
+                  <td>{{item.updated | date:'hh:mm:ss dd-MM-yyyy'}}</td>
+                  <td class="text-right">
+                    <i class="fa fa-edit"></i>
+                    <span> | </span>
+                    <i class="fa fa-trash"></i>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>จำนวนสมาชิกทั้งหมด {{items.length}} คน</th>
+                </tr>
+              </tfoot>
+            </table>
+            <!-- <pagination previousText="หน้าก่อนหน้า" nextText="หน้าถัดไป" [totalItems]="30"></pagination> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-auth-content>
