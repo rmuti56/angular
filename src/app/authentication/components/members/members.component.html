@@ -16,7 +16,8 @@
         <!-- ส่วนหัว -->
         <div class="tile-title-w-btn">
           <h3 class="title">
-            <i class="fa fa-list">รายการสมาชิก</i>
+            <i class="fa fa-list"></i>
+            รายการสมาชิก
           </h3>
           <!-- ค้นหา -->
           <!-- <div class="form-group">
@@ -70,9 +71,9 @@
                   <td>{{getRoleName(item.role)}}</td>
                   <td>{{item.updated | date:'hh:mm:ss dd-MM-yyyy'}}</td>
                   <td class="text-right">
-                    <i class="fa fa-edit"></i>
+                    <i class="fa fa-edit curser text-warning" (click)="onUpdateMember(item)"></i>
                     <span> | </span>
-                    <i class="fa fa-trash"></i>
+                    <i class="fa fa-trash curser text-danger" (click)="onDeleteMember(item)"></i>
                   </td>
                 </tr>
               </tbody>

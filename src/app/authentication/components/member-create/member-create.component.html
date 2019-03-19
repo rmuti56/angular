@@ -1,7 +1,14 @@
 <app-auth-content>
   <div class="app-title">
     <div>
-      <h1><i class="fa fa-users"></i> เพิ่มสมาชิกใหม่</h1>
+      <h1>
+        <span *ngIf="!memId">
+          <i class="fa fa-users"></i> เพิ่มสมาชิกใหม่
+        </span>
+        <span *ngIf="memId">
+          <i class="fa fa-users"></i> แก้ไขข้อมูลสมาชิก
+        </span>
+      </h1>
       <p>หน้าสำหรับเพิ่มหรือแก้ไขสมาชิก</p>
     </div>
     <ul class="app-breadcrumb breadcrumb">
@@ -16,7 +23,12 @@
       <div class="tile">
         <div class="tile-title-w-btn">
           <h3 class="title">
-            <i class="fa fa-user-plus">เพิ่มสมาชิกใหม่</i>
+            <span *ngIf="!memId">
+              <i class="fa fa-user-plus"></i> เพิ่มสมาชิกใหม่
+            </span>
+            <span *ngIf="memId">
+              <i class="fa fa-edit"></i> แก้ไขข้อมูลสมาชิก
+            </span>
           </h3>
         </div>
         <!-- ส่วนฟอร์ม -->

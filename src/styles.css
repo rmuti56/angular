@@ -6,3 +6,15 @@
 [data-notify="container"] {
   z-index: 1060 !important;
 }
+
+.paginate_button {
+  border-radius: 50px !important;
+}
+
+.swal2-cancel {
+  margin: 10px
+}
+
+.fa {
+  padding: 2px;
+}

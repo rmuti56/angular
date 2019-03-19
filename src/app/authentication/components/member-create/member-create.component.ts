@@ -7,12 +7,15 @@ import { SharedsService } from 'src/app/shareds/services/shareds.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/shareds/services/alert.service';
 import { ValidatorsService } from 'src/app/shareds/services/validators.service';
+import { MemberService } from '../../services/member.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 
 @Component({
   selector: 'app-member-create',
   templateUrl: './member-create.component.html',
-  styleUrls: ['./member-create.component.css']
+  styleUrls: ['./member-create.component.css'],
+  providers: [MemberService]
 })
 export class MemberCreateComponent implements IMemberCreateComponent {
 
@@ -20,14 +23,23 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     private shareds: SharedsService,
     private builder: FormBuilder,
     private alert: AlertService,
-    private validator: ValidatorsService
+    private validator: ValidatorsService,
+    private member: MemberService,
+    private router: Router,
+    private activatedRouter: ActivatedRoute
 
   ) {
+    this.activatedRouter.params.forEach(param => {
+      this.memId = param.id
+    });
+
     this.positionItem = this.shareds.positionItem;
     this.initialCreateFormData();
+    this.initialUpdateFormData();
   }
 
   form: FormGroup;
+  memId: any;
   positionItem: string[];
   roleItem: IRoleAccount[] = [
     IRoleAccount.Member,
@@ -40,7 +52,24 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     if (this.form.invalid) {
       return this.alert.notify('กรุณากรอกข้อมูลให้ครบ')
     }
-    console.log(this.form.value)
+    //หากเป็นการเพิ่มสมาชิกใหม่
+    if (!this.memId) {
+      this.member.createMember(this.form.value)
+        .then(res => {
+          this.alert.notify('บันทึกข้อมูลสำหรับ', 'info')
+          this.router.navigate(['', AppURL.Authen, AuthURL.Member])
+        })
+        .catch(err => this.alert.notify(err.Message))
+    } else {
+      //หากเป็นการแก้ไขข้อมูลสมาชิก
+      this.member.updateMember(this.memId, this.form.value)
+        .then(member => {
+          this.alert.notify('แก้ไขข้อมุลสำเร็จ', 'info');
+          this.router.navigate(['', AppURL.Authen, AuthURL.Member])
+        })
+        .catch(err => this.alert.notify(err.Message))
+    }
+
   }
 
   //แสดงข้อมูลสิทธิ์ผู้ใช้งานเป็นตัวหนังสือ
@@ -78,5 +107,27 @@ export class MemberCreateComponent implements IMemberCreateComponent {
       position: ['', Validators.required],
       role: ['', Validators.required],
     })
+  }
+
+  //แก้ไขฟอร์ม
+  private initialUpdateFormData() {
+    if (!this.memId) return;
+    this.member.getMember(this.memId)
+      .then(member => {
+        //นำข้อมูลมาใส่ฟอร์ม
+        const form = this.form;
+        form.controls['image'].setValue(member.image);
+        form.controls['email'].setValue(member.email);
+        form.controls['firstname'].setValue(member.firstname);
+        form.controls['lastname'].setValue(member.lastname);
+        form.controls['position'].setValue(member.position);
+        form.controls['role'].setValue(member.role);
+        form.controls['password'].setValidators(this.validator.isPassword);
+
+      })
+      .catch(err => {
+        this.alert.notify(err.Message)
+        this.router.navigate(['', AppURL.Authen, AuthURL.Member])
+      })
   }
 }

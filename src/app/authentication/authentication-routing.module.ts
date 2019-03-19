@@ -19,7 +19,13 @@ const routes: Routes = [
   { path: AuthURL.Card, component: CardsComponent },
   { path: AuthURL.Widget, component: WidgetsComponent },
   { path: AuthURL.Member, component: MembersComponent },
-  { path: AuthURL.MemberCreate, component: MemberCreateComponent },
+  {
+    path: AuthURL.MemberCreate, children: [
+      { path: '', component: MemberCreateComponent },
+      { path: ':id', component: MemberCreateComponent }
+    ]
+  },
+  //{ path: AuthURL.MemberCreate + '/:id', component: MemberCreateComponent },
 
 ];
 

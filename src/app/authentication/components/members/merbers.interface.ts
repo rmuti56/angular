@@ -8,8 +8,12 @@ export interface IMembersComponent {
   searchType: IMemberSearchKey;
   searchTypeItems: IMemberSearchKey[];
   onSearchItem(): void;
-
   getRoleName(role: IRoleAccount): string;
+  onDeleteMember(item: IAccount): void;
+  ngOnDestroy(): void;
+  ngOnInit(): void;
+  onUpdateMember(item: IAccount): void;
+
 }
 
 export interface IMemberSearch {

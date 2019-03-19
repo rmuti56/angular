@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-declare let $
+declare let $;
+declare let Swal;
 @Injectable()
 export class AlertService {
+
+  // แจ้งเตือนระบบ Default function
   notify(message: string, type: string = 'warning') {
     $.notify({
       // options
@@ -49,7 +52,46 @@ export class AlertService {
           '</div>'
       });
   }
+  // แจ้งเตือนข้อผิดพลาด
   someting_wrong(message: string = 'ข้อมูลบางอย่างไม่ถูกต้อง กรุณาลองอีกครั้ง') {
     this.notify(message);
+  }
+
+  // แจ้งเตือนยืนยัน
+  confirm(message: string = 'คุณต้องการทำรายการต่อไปหรือไม่'): Promise<any> {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false,
+    })
+    return swalWithBootstrapButtons.fire({
+      title: 'คำยืนยัน',
+      text: message,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ยืนยน!',
+      cancelButtonText: 'ยกเลิก',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+        swalWithBootstrapButtons.fire(
+          'Deleted!',
+          'ข้อมูลถูกลบเรียบร้อย.',
+          'success'
+        )
+        return true
+      } else if (
+        // Read more about handling dismissals
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          'Cancelled',
+          'การลบข้อมูลถูกยกเลิก',
+          'error'
+        )
+      }
+    })
   }
 }

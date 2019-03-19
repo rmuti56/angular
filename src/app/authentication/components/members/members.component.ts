@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppURL } from 'src/app/app.url';
 import { AuthURL } from '../../authentication.url';
 import { MemberService } from '../../services/member.service';
 import { IMembersComponent, IMemberSearchKey, IMemberSearch } from './merbers.interface';
 import { IAccount, IRoleAccount } from 'src/app/shareds/services/account.service';
 import { AlertService } from 'src/app/shareds/services/alert.service';
+import { DataTableDirective } from 'angular-datatables';
+import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-members',
@@ -13,16 +16,35 @@ import { AlertService } from 'src/app/shareds/services/alert.service';
   providers: [MemberService]
 })
 export class MembersComponent implements IMembersComponent {
+  items: IAccount[] = [];
+  dtOptions: DataTables.Settings = {};
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  dtTrigger: Subject<any> = new Subject();
   constructor(
     private member: MemberService,
     private alert: AlertService,
-
+    private router: Router
   ) {
-    this.initialLoadMember();
+
     //กำหนดค่าเริ่มต้นให้กับ searchType
     this.searchType = this.searchTypeItems[0];
   }
-  items: IAccount[] = [];
+
+  ngOnInit(): void {
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: 25,
+      order: [5, "desc"]
+    };
+    this.initialLoadMember();
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+
+
   //ตัวแปรสำหรับค้นหา
   searchText: string = '';
   searchType: IMemberSearchKey;
@@ -36,13 +58,11 @@ export class MembersComponent implements IMembersComponent {
 
   //ค้นหาข้อมูล
   onSearchItem() {
-
     this.initialLoadMember({
       searchText: this.searchType.key == 'role' ? IRoleAccount[this.searchText] || '' : this.searchText,
       searchType: this.searchType.key
     }
     );
-
   }
 
   //แสดงชื่อสิทธิ์ผู้ใช้งาน
@@ -50,16 +70,47 @@ export class MembersComponent implements IMembersComponent {
     return IRoleAccount[role];
   }
 
+  //ลบข้อมูลสมาชิก
+  onDeleteMember(item: IAccount) {
+    this.alert.confirm('คุณต้องการลบข้อมูลใช่หรือไม่').then(status => {
+      if (!status) return;
+      this.member.deleteMember(item.id)
+        .then(res => {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.initialLoadMember();
+          });
+        })
+        .catch(err => {
+          console.log(err)
+          this.alert.notify(err.Message)
+        })
+
+    })
+  }
+
+  // แก้ไขข้อมูลสมาชิกโดยส่ง id ไปยัง url
+  onUpdateMember(item: IAccount) {
+
+    this.router.navigate(['',
+      AppURL.Authen,
+      AuthURL.MemberCreate, item.id]
+    )//หรืออีกวิธี ,item.id(ต้องสร้าง path ให้รู้จัก) ,{id:item.id}, { queryParams: { id: item.id }
+  }
+
+
   //โหลดข้อมูลสมาชิก
   private initialLoadMember(options?: IMemberSearch) {
     this.member
       .getMembers(options)
       .then(item => {
-        console.log(item)
         this.items = item;
-
+        this.dtTrigger.next();
       })
-      .catch(err => this.alert.notify(err.Message));
+      .catch(err => {
+        console.log(err)
+        this.alert.notify(err.Message)
+      })
   }
 
   AppURL = AppURL;
