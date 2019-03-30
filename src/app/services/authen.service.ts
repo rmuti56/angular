@@ -6,8 +6,8 @@ export class AuthenService {
   private accessKey = 'ssKey';
 
   //กำหนดค่า access token ไว้ในความจำ browser
-  setAuthenticated(accessToken: string) {
-    localStorage.setItem(this.accessKey, accessToken);
+  setAuthenticated(accessToken: any) {
+    localStorage.setItem(this.accessKey, accessToken.accessToken);
   }
 
   //ดึงค่า access token ในความจำ browser ออกมา

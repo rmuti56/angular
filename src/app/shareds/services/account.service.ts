@@ -3,16 +3,23 @@ import { IRegister } from 'src/app/components/register/register.interface';
 import { Iloign } from 'src/app/components/login/login.interface';
 import { IProfile } from 'src/app/authentication/components/profile/prifile.interface';
 import { IChangePassword } from 'src/app/authentication/components/profile/change-password/change-password.interface';
+import { HttpService } from 'src/app/services/http.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService { //Service นี้คือ global service
 
+  constructor(
+    private http: HttpService
+  ) {
+
+  }
+
   public mockUserItem: IAccount[] = [
     {
       id: 1,
-      firstname: 'วัชระเทพ',
-      lastname: 'คำหนูไทย',
+      firstname: 'employee',
+      lastname: 'employee',
       email: 'frontend@hotmail.com',
       password: '1111111',
       position: 'Frontend Developer',
@@ -23,8 +30,8 @@ export class AccountService { //Service นี้คือ global service
 
     }, {
       id: 2,
-      firstname: 'วัชระเทพ',
-      lastname: 'คำหนูไทย',
+      firstname: 'admin',
+      lastname: 'admin',
       email: 'backend@hotmail.com',
       password: '1111111',
       position: 'Backend Developer',
@@ -32,65 +39,72 @@ export class AccountService { //Service นี้คือ global service
       role: IRoleAccount.Admin,
       created: new Date(),
       updated: new Date()
+    },
+    {
+      id: 3,
+      firstname: 'วัชระเทพ',
+      lastname: 'คำหนูไทย',
+      email: 'test@hotmail.com',
+      password: '1111111',
+      position: 'Backend Developer',
+      image: null,
+      role: IRoleAccount.Member,
+      created: new Date(),
+      updated: new Date()
     }
   ];
 
   //เปลี่ยนรหัสผ่าน
   onChangePassword(accessToken: string, model: IChangePassword) {
-    return new Promise((resolve, reject) => {
-      const userProfile = this.mockUserItem.find(item => item.id == accessToken)
-      if (!userProfile) return reject({ Message: 'ไม่มีผู้ใช้งานนี้ในระบบ' })
-      if (userProfile.password != model.old_password) return reject({ Message: 'รหัสผ่านเดิมไม่ถูกต้อง' })
-      userProfile.password = model.new_password;
-      userProfile.updated = new Date();
-      resolve(userProfile);
-    })
-
+    return this.http.requestPost('changepassword', model, accessToken)
+      .toPromise() as Promise<any>
   }
 
   // แก้ไขข้อมูลส่วนตัว Update profile
   onUpdateProfile(accessToken: string, model: IProfile) {
-    return new Promise((resolve, reject) => {
-      const userProfile = this.mockUserItem.find(user => user.id == accessToken)
-      if (!userProfile) return reject({ Message: 'ไม่มีผู้ใช้นี้ในระบบ' });
-      userProfile.firstname = model.firstname;
-      userProfile.lastname = model.lastname;
-      userProfile.position = model.position;
-      userProfile.image = model.image;
-      userProfile.updated = new Date();
-      resolve(userProfile);
-
-    })
-
+    return (this.http.requestPost('profile', model, accessToken)
+      .toPromise() as Promise<IAccount>)
+      .then(user => {
+        console.log(user)
+        this.setUserLogin(user)
+      })
+  }
+  //store user login
+  public UserLogin: IAccount = {} as any;
+  public setUserLogin(userLogin: IAccount) {
+    this.UserLogin.id = userLogin.id;
+    this.UserLogin.firstname = userLogin.firstname;
+    this.UserLogin.lastname = userLogin.lastname;
+    this.UserLogin.password = userLogin.password;
+    this.UserLogin.position = userLogin.position;
+    this.UserLogin.image = userLogin.image;
+    this.UserLogin.updated = userLogin.updated;
+    this.UserLogin.created = userLogin.created;
+    this.UserLogin.email = userLogin.email;
+    this.UserLogin.role = userLogin.role;
+    return this.UserLogin;
   }
 
   // ดึงข้อมูลผู้ที่เข้าสู่ระบบจาก Token
   getUserLogin(accessToken: string) {
-    return new Promise<IAccount>((resolve, reject) => {
-      const userLogin = this.mockUserItem.find(m => m.id == accessToken);
-      if (!userLogin) return reject({ Message: 'accessToken ไม่ถูกต้อง' });
-      resolve(userLogin);
-    })
+    return (this.http
+      .requestGet('data', accessToken)
+      .toPromise() as Promise<IAccount>)
+      .then(userLogin => this.setUserLogin(userLogin))
   }
 
   //เข้าสู่ระบบ
   onLogin(model: Iloign) {
-    return new Promise<{ accessToken: string }>((resolve, reject) => {
-      const userLogin = this.mockUserItem.find(item => item.email == model.email && item.password == model.password);
-      if (!userLogin) return reject({ Message: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' })
-      resolve({
-        accessToken: userLogin.id
-      });
-    })
+    return this.http
+      .requestPost('login', model)
+      .toPromise() as Promise<IAccount>
   }
 
   // ลงทะเบียน
   onRegister(model: IRegister) {
-    return new Promise((resolve, reject) => {
-      model['id'] = Math.random();
-      this.mockUserItem.push(model);
-      resolve(model);
-    })
+    return this.http
+      .requestPost('register', model)
+      .toPromise() as Promise<IAccount>;
   }
 }
 

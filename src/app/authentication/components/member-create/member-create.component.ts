@@ -32,11 +32,12 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     this.activatedRouter.params.forEach(param => {
       this.memId = param.id
     });
-
     this.positionItem = this.shareds.positionItem;
     this.initialCreateFormData();
     this.initialUpdateFormData();
   }
+
+
 
   form: FormGroup;
   memId: any;
@@ -56,10 +57,10 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     if (!this.memId) {
       this.member.createMember(this.form.value)
         .then(res => {
-          this.alert.notify('บันทึกข้อมูลสำหรับ', 'info')
+          this.alert.notify('บันทึกข้อมูลสำเร็จ', 'info')
           this.router.navigate(['', AppURL.Authen, AuthURL.Member])
         })
-        .catch(err => this.alert.notify(err.Message))
+        .catch(err => this.alert.notify(err.error))
     } else {
       //หากเป็นการแก้ไขข้อมูลสมาชิก
       this.member.updateMember(this.memId, this.form.value)
@@ -67,7 +68,7 @@ export class MemberCreateComponent implements IMemberCreateComponent {
           this.alert.notify('แก้ไขข้อมุลสำเร็จ', 'info');
           this.router.navigate(['', AppURL.Authen, AuthURL.Member])
         })
-        .catch(err => this.alert.notify(err.Message))
+        .catch(err => this.alert.notify(err.error))
     }
 
   }
@@ -111,6 +112,7 @@ export class MemberCreateComponent implements IMemberCreateComponent {
 
   //แก้ไขฟอร์ม
   private initialUpdateFormData() {
+
     if (!this.memId) return;
     this.member.getMember(this.memId)
       .then(member => {
@@ -123,10 +125,10 @@ export class MemberCreateComponent implements IMemberCreateComponent {
         form.controls['position'].setValue(member.position);
         form.controls['role'].setValue(member.role);
         form.controls['password'].setValidators(this.validator.isPassword);
-
+        form.controls['password'].updateValueAndValidity();
       })
       .catch(err => {
-        this.alert.notify(err.Message)
+        this.alert.notify(err.error)
         this.router.navigate(['', AppURL.Authen, AuthURL.Member])
       })
   }

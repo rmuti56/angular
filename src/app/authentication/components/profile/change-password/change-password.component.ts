@@ -37,7 +37,7 @@ export class ChangePasswordComponent implements IChangePasswordComponent {
       }
       )
 
-      .catch(err => this.alert.notify(err.Message));
+      .catch(err => this.alert.notify(err.error));
 
   }
 

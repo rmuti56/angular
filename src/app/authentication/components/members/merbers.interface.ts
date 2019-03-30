@@ -7,6 +7,8 @@ export interface IMembersComponent {
   searchText: string;
   searchType: IMemberSearchKey;
   searchTypeItems: IMemberSearchKey[];
+  Role: typeof IRoleAccount;
+  UserLogin: IAccount;
   onSearchItem(): void;
   getRoleName(role: IRoleAccount): string;
   onDeleteMember(item: IAccount): void;

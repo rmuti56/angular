@@ -13,6 +13,8 @@ import { ValidatorsService } from 'src/app/shareds/services/validators.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements IRegisterComponent {
+  Url = AppURL;
+  form: FormGroup
   constructor(
     private builder: FormBuilder,
     private alert: AlertService,
@@ -23,11 +25,6 @@ export class RegisterComponent implements IRegisterComponent {
   ) {
     this.initialCreateFormData();
   }
-
-
-
-  Url = AppURL;
-  form: FormGroup
 
   //ลงทะเบียน
   onSubmit() {
@@ -40,7 +37,7 @@ export class RegisterComponent implements IRegisterComponent {
         this.alert.notify('ลงทะเบียนสำเร็จ', 'info');
         this.router.navigate(['/', AppURL.Login]);
       })
-      .catch(err => this.alert.notify(err.Message));
+      .catch(err => this.alert.notify(err.error));
   }
 
   private initialCreateFormData() {

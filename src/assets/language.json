@@ -1,0 +1,18 @@
+{
+  "menu": {
+    "th": "เมนู",
+    "en": "menu"
+  },
+  "setting": {
+    "th": "ตั้งค่า",
+    "en": "setting"
+  },
+  "info": {
+    "th": "ข้อมูลส่วนตัว",
+    "en": "information"
+  },
+  "home": {
+    "th": "หน้าหลัก",
+    "en": "home"
+  }
+}

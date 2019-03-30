@@ -8,7 +8,7 @@ declare const App: any;
 export class AppComponent implements OnInit {
   title = 'usingangular';
   ngOnInit() {
-    App.initialLoadPage();
+
   }
 }
 

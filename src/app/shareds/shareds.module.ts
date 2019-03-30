@@ -11,12 +11,15 @@ import { AlertService } from './services/alert.service';
 import { ValidatorsService } from './services/validators.service';
 import { DataTablesModule } from 'angular-datatables';
 import { SharedsService } from './services/shareds.service';
+import { LoadingComponent } from './components/loading/loading.component';
 
 @NgModule({
   declarations: [
     AuthNavbarComponent,
     AuthSidebarComponent,
-    AuthContentComponent],
+    AuthContentComponent,
+    LoadingComponent
+  ],
   imports: [
     CommonModule,
     BsDropdownModule.forRoot(),
@@ -25,7 +28,8 @@ import { SharedsService } from './services/shareds.service';
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
-    DataTablesModule
+    DataTablesModule,
+
   ],
   exports: [
     AuthNavbarComponent,
@@ -42,7 +46,7 @@ import { SharedsService } from './services/shareds.service';
     AlertService,
     //AccountService,
     ValidatorsService,
-    SharedsService
+    SharedsService,
   ]
 })
 export class SharedsModule { }

@@ -58,7 +58,7 @@
                   <th>ตำแหน่ง</th>
                   <th>สิทธิ์ผู้ใช้</th>
                   <th>เวลา</th>
-                  <th></th>
+                  <th *ngIf="UserLogin.role == Role.Admin"></th>
                 </tr>
               </thead>
               <!-- ดึงข้อมูลมาแสดง -->
@@ -70,10 +70,13 @@
                   <td>{{item.position}}</td>
                   <td>{{getRoleName(item.role)}}</td>
                   <td>{{item.updated | date:'hh:mm:ss dd-MM-yyyy'}}</td>
-                  <td class="text-right">
-                    <i class="fa fa-edit curser text-warning" (click)="onUpdateMember(item)"></i>
-                    <span> | </span>
-                    <i class="fa fa-trash curser text-danger" (click)="onDeleteMember(item)"></i>
+                  <td class="text-right" *ngIf="UserLogin.role == Role.Admin">
+                    <div class="btn-group">
+                      <a class="btn btn-primary" (click)="onUpdateMember(item)"><i class="fa fa-lg fa-edit"
+                          style="color:#fff"></i></a>
+                      <a class="btn btn-primary" (click)="onDeleteMember(item)"><i class="fa fa-lg fa-trash"
+                          style="color:#fff"></i></a>
+                    </div>
                   </td>
                 </tr>
               </tbody>
